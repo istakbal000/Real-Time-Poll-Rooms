@@ -5,6 +5,7 @@ const { Server } = require('socket.io');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const pollRoutes = require('./routes/pollRoutes');
+const path = require('path');
 
 const app = express();
 const server = http.createServer(app);
@@ -28,8 +29,13 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/polls', pollRoutes);
 
-app.get('/', (req, res) => {
-    res.send('Poll App API running');
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, '../client/dist')));
+
+// The "catchall" handler: for any request that doesn't
+// match one above, send back React's index.html file.
+app.get(/(.*)/, (req, res) => {
+    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
 });
 
 // Socket.IO
