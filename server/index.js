@@ -26,25 +26,6 @@ app.use(express.json());
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
     const clientDistPath = path.join(__dirname, '../client/dist');
-    console.log('Serving static files from:', clientDistPath);
-
-    // Debug: List files in client dist
-    const fs = require('fs');
-    if (fs.existsSync(clientDistPath)) {
-        try {
-            console.log('Client dist files:', fs.readdirSync(clientDistPath));
-        } catch (e) {
-            console.error('Error reading client dist:', e);
-        }
-    } else {
-        console.error('Client dist folder NOT FOUND at:', clientDistPath);
-        try {
-            console.log('Listing parent directory:', fs.readdirSync(path.join(__dirname, '..')));
-        } catch (e) {
-            console.error('Error reading parent directory:', e);
-        }
-    }
-
     app.use(express.static(clientDistPath));
 
     // Catch-all handler for SPA
