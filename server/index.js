@@ -25,14 +25,34 @@ app.use(express.json());
 
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
-    app.use(express.static(path.join(__dirname, '../client/dist')));
+    const clientDistPath = path.join(__dirname, '../client/dist');
+    console.log('Serving static files from:', clientDistPath);
+
+    // Debug: List files in client dist
+    const fs = require('fs');
+    if (fs.existsSync(clientDistPath)) {
+        try {
+            console.log('Client dist files:', fs.readdirSync(clientDistPath));
+        } catch (e) {
+            console.error('Error reading client dist:', e);
+        }
+    } else {
+        console.error('Client dist folder NOT FOUND at:', clientDistPath);
+        try {
+            console.log('Listing parent directory:', fs.readdirSync(path.join(__dirname, '..')));
+        } catch (e) {
+            console.error('Error reading parent directory:', e);
+        }
+    }
+
+    app.use(express.static(clientDistPath));
 
     // Catch-all handler for SPA
     app.use((req, res, next) => {
         if (req.path.startsWith('/api')) {
             return next();
         }
-        res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+        res.sendFile(path.join(clientDistPath, 'index.html'));
     });
 }
 
