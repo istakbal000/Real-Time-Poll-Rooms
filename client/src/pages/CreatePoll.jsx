@@ -1,11 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createPoll } from '../services/api';
+import { createPoll, checkHealth } from '../services/api';
 
 export default function CreatePoll() {
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState(['', '']);
+    const [isHealthy, setIsHealthy] = useState(null);
+    const [isChecking, setIsChecking] = useState(true);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        const checkServerHealth = async () => {
+            try {
+                const healthy = await checkHealth();
+                setIsHealthy(healthy);
+                setIsChecking(false);
+            } catch (error) {
+                console.error('Health check error:', error);
+                setIsHealthy(false);
+                setIsChecking(false);
+            }
+        };
+
+        checkServerHealth();
+    }, []);
 
     const handleOptionChange = (index, value) => {
         const newOptions = [...options];
@@ -23,6 +41,11 @@ export default function CreatePoll() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        if (!isHealthy) {
+            alert('Server is not connected. Please wait for the server to be ready.');
+            return;
+        }
         
         try {
             console.log('Submitting poll:', { question, options });
@@ -52,6 +75,51 @@ export default function CreatePoll() {
     return (
         <div className="container">
             <div className="card">
+                {/* Health Status */}
+                {isChecking && (
+                    <div style={{ 
+                        textAlign: 'center', 
+                        padding: '1rem', 
+                        marginBottom: '1rem',
+                        background: '#f3f4f6',
+                        borderRadius: '8px'
+                    }}>
+                        <div className="loading-spinner" style={{ margin: '0 auto' }}></div>
+                        <p>Checking server connection...</p>
+                    </div>
+                )}
+                
+                {!isChecking && isHealthy === false && (
+                    <div style={{ 
+                        textAlign: 'center', 
+                        padding: '1rem', 
+                        marginBottom: '1rem',
+                        background: '#fef2f2',
+                        border: '1px solid #fecaca',
+                        borderRadius: '8px',
+                        color: '#dc2626'
+                    }}>
+                        <p>❌ Server is not responding. Please check if the backend is running.</p>
+                        <p style={{ fontSize: '0.9rem', marginTop: '0.5rem' }}>
+                            URL: {API_URL}
+                        </p>
+                    </div>
+                )}
+
+                {!isChecking && isHealthy && (
+                    <div style={{ 
+                        textAlign: 'center', 
+                        padding: '1rem', 
+                        marginBottom: '1rem',
+                        background: '#f0fdf4',
+                        border: '1px solid #bbf7d0',
+                        borderRadius: '8px',
+                        color: '#166534'
+                    }}>
+                        <p>✅ Server is connected and ready!</p>
+                    </div>
+                )}
+
                 <h1 className="text-center mb-8" style={{ 
     fontSize: '2.5rem', 
     fontWeight: '800', 
@@ -77,6 +145,7 @@ export default function CreatePoll() {
                             onChange={(e) => setQuestion(e.target.value)}
                             className="input"
                             placeholder="What's your question?"
+                            disabled={!isHealthy}
                             required
                         />
                     </div>
@@ -96,6 +165,7 @@ export default function CreatePoll() {
                                 className="input"
                                 style={{ marginBottom: 0 }}
                                 placeholder={`Option ${i + 1}`}
+                                disabled={!isHealthy}
                                 required
                             />
                             {options.length > 2 && (
@@ -114,6 +184,7 @@ export default function CreatePoll() {
                                         minWidth: '50px',
                                         height: '50px'
                                     }}
+                                    disabled={!isHealthy}
                                 >✕</button>
                             )}
                         </div>
@@ -129,11 +200,12 @@ export default function CreatePoll() {
                             marginBottom: '2rem',
                             width: '100%'
                         }}
+                        disabled={!isHealthy}
                     >
                         ➕ Add Option
                     </button>
 
-                    <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
+                    <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={!isHealthy}>
                         🚀 Create Poll
                     </button>
                 </form>
