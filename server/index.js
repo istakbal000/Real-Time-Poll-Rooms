@@ -11,14 +11,14 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: process.env.NODE_ENV === 'production' ? false : ["http://localhost:5173"],
+        origin: process.env.NODE_ENV === 'production' ? ["https://real-time-poll-rooms-5.onrender.com"] : ["http://localhost:5173"],
         methods: ["GET", "POST"]
     }
 });
 
 // Middleware
 app.use(cors({
-    origin: process.env.NODE_ENV === 'production' ? false : ["http://localhost:5173"],
+    origin: process.env.NODE_ENV === 'production' ? ["https://real-time-poll-rooms-5.onrender.com"] : ["http://localhost:5173"],
     credentials: true
 }));
 app.use(express.json());
@@ -26,7 +26,7 @@ app.use(express.json());
 // Serve static files in production
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
-    
+
     // Catch-all handler for SPA
     app.use((req, res, next) => {
         if (req.path.startsWith('/api')) {

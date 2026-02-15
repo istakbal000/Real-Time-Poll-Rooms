@@ -1,6 +1,7 @@
 import { io } from 'socket.io-client';
+import { API_URL } from './api';
 
-const socket = io('https://real-time-poll-rooms-4.onrender.com', {
+const socket = io(API_URL, {
     autoConnect: true,
     reconnection: true,
     reconnectionDelay: 1000,
