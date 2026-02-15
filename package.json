@@ -4,8 +4,9 @@
   "description": "Real-time polling application with React and Node.js",
   "scripts": {
     "start": "cd server && npm start",
-    "build": "npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client",
-    "postinstall": "npm run build"
+    "build": "echo 'STARTING BUILD...' && npm install --prefix server && npm install --prefix client --include=dev && npm run build --prefix client && echo 'BUILD COMPLETE - CHECKING DIST:' && ls -la client/dist",
+    "postinstall": "npm run build",
+    "heroku-postbuild": "npm run build"
   },
   "keywords": [
     "react",
