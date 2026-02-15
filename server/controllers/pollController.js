@@ -11,17 +11,26 @@ const getVoterHash = (req) => {
 
 exports.createPoll = async (req, res) => {
     try {
+        console.log('Received poll creation request:', req.body);
         const { question, options } = req.body;
+        
         if (!question || !options || options.length < 2) {
+            console.log('Validation failed:', { question, options });
             return res.status(400).json({ error: 'Question and at least 2 options are required' });
         }
+        
         const poll = new Poll({
             question,
             options: options.map(opt => ({ text: opt }))
         });
+        
+        console.log('Saving poll:', poll);
         await poll.save();
+        console.log('Poll saved successfully:', poll._id);
+        
         res.status(201).json(poll);
     } catch (err) {
+        console.error('Error creating poll:', err);
         res.status(500).json({ error: err.message });
     }
 };

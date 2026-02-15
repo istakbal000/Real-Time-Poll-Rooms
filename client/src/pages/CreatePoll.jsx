@@ -23,15 +23,29 @@ export default function CreatePoll() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
         try {
+            console.log('Submitting poll:', { question, options });
+            
             const validOptions = options.filter(opt => opt.trim() !== '');
-            if (validOptions.length < 2) return alert('At least 2 options required');
+            console.log('Valid options:', validOptions);
+            
+            if (validOptions.length < 2) {
+                alert('At least 2 options required');
+                return;
+            }
 
+            console.log('Sending request to API...');
             const { data } = await createPoll({ question, options: validOptions });
+            console.log('Poll created successfully:', data);
+            
             navigate(`/poll/${data._id}`);
         } catch (err) {
-            console.error(err);
-            alert('Error creating poll');
+            console.error('Error creating poll:', err);
+            console.error('Error response:', err.response);
+            
+            const errorMessage = err.response?.data?.error || err.message || 'Unknown error occurred';
+            alert(`Error creating poll: ${errorMessage}`);
         }
     };
 
