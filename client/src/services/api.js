@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Try to detect if we're in development
 const isDevelopment = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-export const API_URL = isDevelopment ? 'http://localhost:5000' : 'https://real-time-poll-rooms-4.onrender.com';
+export const API_URL = isDevelopment ? 'http://localhost:5000' : 'https://real-time-poll-rooms-s2yl.onrender.com';
 
 console.log('Environment:', { isDevelopment, hostname: window.location.hostname, API_URL });
 
