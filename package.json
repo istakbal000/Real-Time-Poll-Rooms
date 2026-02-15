@@ -1,12 +1,12 @@
 {
-  "name": "poll-share-root",
+  "name": "real-time-poll-rooms",
   "version": "1.0.0",
-  "description": "Root package for Poll Share app",
+  "description": "Real-time polling application with React and Node.js",
   "scripts": {
-    "start": "node server/index.js",
+    "start": "cd server && npm start",
     "build": "npm install --prefix server && npm install --prefix client && npm run build --prefix client"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["react", "nodejs", "socket.io", "mongodb", "polling", "real-time"],
+  "author": "istakbal000",
   "license": "ISC"
 }

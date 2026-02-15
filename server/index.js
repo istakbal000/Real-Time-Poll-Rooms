@@ -11,14 +11,26 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
     cors: {
-        origin: "*",
+        origin: process.env.NODE_ENV === 'production' ? false : ["http://localhost:5173"],
         methods: ["GET", "POST"]
     }
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: process.env.NODE_ENV === 'production' ? false : ["http://localhost:5173"],
+    credentials: true
+}));
 app.use(express.json());
+
+// Serve static files in production
+if (process.env.NODE_ENV === 'production') {
+    app.use(express.static(path.join(__dirname, '../client/dist')));
+    
+    app.get('*', (req, res) => {
+        res.sendFile(path.join(__dirname, '../client/dist/index.html'));
+    });
+}
 
 // Attach io to request
 app.use((req, res, next) => {
@@ -29,13 +41,9 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api/polls', pollRoutes);
 
-// Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../client/dist')));
-
-// The "catchall" handler: for any request that doesn't
-// match one above, send back React's index.html file.
-app.get(/(.*)/, (req, res) => {
-    res.sendFile(path.join(__dirname, '../client/dist', 'index.html'));
+// Basic route to check server status
+app.get('/', (req, res) => {
+    res.send("Poll Share Backend is Running");
 });
 
 // Socket.IO

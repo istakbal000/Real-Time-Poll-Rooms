@@ -19,6 +19,7 @@
     "mongoose": "^9.2.1",
     "nodemon": "^3.1.11",
     "poll-share-root": "file:..",
+    "real-time-poll-rooms": "file:..",
     "socket.io": "^4.8.3"
   }
 }
