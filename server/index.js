@@ -27,7 +27,11 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'production') {
     app.use(express.static(path.join(__dirname, '../client/dist')));
     
-    app.get('*', (req, res) => {
+    // Catch-all handler for SPA
+    app.use((req, res, next) => {
+        if (req.path.startsWith('/api')) {
+            return next();
+        }
         res.sendFile(path.join(__dirname, '../client/dist/index.html'));
     });
 }
